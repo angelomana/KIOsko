@@ -13,15 +13,12 @@ import base64
 import socket
 import subprocess
 import stat
-
-# Dependencia externa, requiere: pip install cryptography
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 
 class CryptoManager:
-    # (Sin cambios en esta clase)
     def __init__(self, password: str, salt: bytes):
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000, backend=default_backend())
         key = base64.urlsafe_b64encode(kdf.derive(password.encode())); self.fernet = Fernet(key)
@@ -32,7 +29,6 @@ class CryptoManager:
         except Exception: return "DECRYPT_FAILED"
 
 class GUIAuthHandler(paramiko.auth_handler.AuthHandler):
-    # (Sin cambios en esta clase)
     def __init__(self, root: tk.Tk, mfa_queue: queue.Queue):
         self.root, self.mfa_queue = root, mfa_queue
     def __call__(self, title, instructions, prompt_list):
@@ -43,8 +39,8 @@ class GUIAuthHandler(paramiko.auth_handler.AuthHandler):
         prompt_text = prompt_list[0][0] if prompt_list else "Código de Verificación:"
         self.mfa_queue.put(simpledialog.askstring(title, prompt_text, parent=self.root))
 
+###utilerias##
 class UtilitiesWindow(tk.Toplevel):
-    # (Sin cambios en esta clase)
     def __init__(self, parent, commands_widget):
         super().__init__(parent); self.transient(parent); self.grab_set(); self.commands_target_widget = commands_widget
         self.title("Utilerias"); self.geometry("900x600"); self.minsize(600, 400)
@@ -457,7 +453,8 @@ class JsonTableApp:
             elif test_type == 'telnet': self._run_telnet_for_server(config, port)
             elif test_type == 'curl': self._run_curl_for_server(config, port, path_str)
 
-    def start_ssh_thread(self): threading.Thread(target=self.launch_ssh_operations, daemon=True).start()
+    def start_ssh_thread(self): 
+        threading.Thread(target=self.launch_ssh_operations, daemon=True).start()
     
     def launch_ssh_operations(self):
         selected_configs = self.get_selected_configs()
